@@ -10,6 +10,7 @@ RMNIST/1, RMNIST/5, and RMNIST/10.
 #### Libraries
 # Standard library
 import cPickle
+import pickle
 import gzip
 import random
 
@@ -61,7 +62,7 @@ def make_rmnist(n=10):
     save into data/rmnist_n.pkl.gz, together with the complete
     validation and test sets.
 
-    """ 
+    """
     td, vd, ts = load_data()
     indices = range(50000)
     random.shuffle(indices)
@@ -73,10 +74,23 @@ def make_rmnist(n=10):
     td0_prime = [td[0][j] for j in flattened_indices]
     td1_prime = [td[1][j] for j in flattened_indices]
     td_prime = (td0_prime, td1_prime)
-    f = gzip.open('data/rmnist_'+str(n)+'.pkl.gz', 'wb')
-    cPickle.dump((td_prime, vd, ts), f)
-    f.close()
-    
+
+    train_data      = td_prime[0]
+    train_labels    = td_prime[1]
+    val_data        = vd[0]
+    val_labels      = vd[1]
+    test_data       = ts[0]
+    test_labels     = ts[1]
+
+    fname = 'data/rmnist_'+str(n)
+    np.savez(fname,
+            train_data = train_data,
+            train_labels = train_labels,
+            val_data = val_data,
+            val_labels = val_labels,
+            test_data = test_data,
+            test_labels = test_labels)
+
 if __name__ == "__main__":
     make_rmnist(1)
     make_rmnist(5)
